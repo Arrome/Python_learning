@@ -8,7 +8,8 @@ from wxpy import *
 非图形化界面，例如linux可系统设置参数console_qr=2或True或-2，在命令框生成黑白二维码
 Bot(cache_path=True,console_qr=-2)
 '''
-bot = Bot(cache_path=True)
+bot = Bot(cache_path=True,console_qr=-2)
+#bot = Bot(cache_path=True)
 
 #发送给自己
 bot.self.send("send to myself")
