@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
+import logging
+
 import requests
 
 
@@ -38,7 +40,7 @@ class DingTalkRobot(object):
         self.__post_request(link_message)
 
     # markdown格式消息
-    def send_markdown(self,title, text, at_mobiles=[], at_all=False):
+    def send_markdown(self, title, text, at_mobiles=[], at_all=False):
         markdown_message = {
             "msgtype": "markdown",
             "markdown": {
@@ -52,21 +54,64 @@ class DingTalkRobot(object):
         }
         self.__post_request(markdown_message)
 
-    def send_image(self, pic_url):
-        image_message = {
-            "msgtype": "image",
-            "image": {
-                "picURL": pic_url
+    '''
+        btnOrientation 0-按钮竖直排列，   1-按钮横向排列
+        hideAvatar     0-正常发消息者头像，1-隐藏发消息头像
+    '''
+    def send_action_card(self, is_single=True, **kwargs):
+        if is_single:
+            self.__send_single_action_card(**kwargs)
+        else:
+            self.__send_mulit_action_card(**kwargs)
+
+    def __send_single_action_card(self, title, text, single_title, single_url, btn_orientation=False, hide_avatar=False):
+        action_card_message = {
+            "msgtype": "actionCard",
+            "actionCard": {
+                "title": title,
+                "text": text,
+                "singleTitle": single_title,
+                "singleURL": single_url,
+                "hideAvatar": hide_avatar,
+                "btnOrientation": btn_orientation
             }
         }
-        self.__post_request(image_message)
+        self.__post_request(action_card_message)
 
+    def __send_mulit_action_card(self, title, text, btns, btn_orientation=False, hide_avatar=False):
+        action_card_message = {
+            "msgtype": "actionCard",
+            "actionCard": {
+                "title": title,
+                "text": text,
+                "btns": btns,
+                "hideAvatar": hide_avatar,
+                "btnOrientation": btn_orientation
+            }
+        }
+        self.__post_request(action_card_message)
+
+    # 发送post请求，验证结果
     def __post_request(self, message):
         message = json.dumps(message)
-        requests.post(self.hook, data=message, headers=self.headers)
-
+        res = requests.post(self.hook, data=message, headers=self.headers)
+        if not res.ok:
+            response = json.loads(res.content.decode("utf-8"))
+            logging.debug(response["errmsg"])
 
 
 if __name__ == "__main__":
-    dingTalkRobot = DingTalkRobot("cdf6f6838b6026034d58fc35d987bbd9c80b6e641a05b689d84223e830d62bd0*1")
-    dingTalkRobot.send_text("hi")
+    ding_talk_robot = DingTalkRobot("cdf6f6838b6026034d58fc35d987bbd9c80b6e641a05b689d84223e830d62bd0")
+    # ding_talk_robot.send_text("hi")
+
+    # ding_talk_robot.send_link("test", "test", "http://www.baidu.com",
+    # # "https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=323887866,1970623179&fm=26&gp=0.jpg")
+
+    # ding_talk_robot.send_markdown("test Markdown",
+    #                               "#### 测试文本\n![screenshot](https://ss3.bdstatic.com" +
+    #                               "/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=323887866,1970623179&fm=26&gp=0.jpg)\n")
+
+    #ding_talk_robot.send_action_card(title="test",text="test",single_title="test",single_url="http://www.baidu.com")
+
+    # btns = [{"title":"test1", "actionURL":"http://www.baidu.com"},{"title":"test2", "actionURL":"http://www.baidu.com"}]
+    # ding_talk_robot.send_action_card(is_single=False,title="test", text="test", btns=btns)
