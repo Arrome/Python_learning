@@ -101,7 +101,7 @@ class DingTalkRobot(object):
 
 
 if __name__ == "__main__":
-    ding_talk_robot = DingTalkRobot("cdf6f6838b6026034d58fc35d987bbd9c80b6e641a05b689d84223e830d62bd0")
+    ding_talk_robot = DingTalkRobot("xxxxxxxxxxxxxxxxxxxxxxx") #cdf6f6838b6026034d58fc35d987bbd9c80b6e641a05b689d84223e830d62bd0*123
     # ding_talk_robot.send_text("hi")
 
     # ding_talk_robot.send_link("test", "test", "http://www.baidu.com",
