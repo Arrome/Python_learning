@@ -9,6 +9,10 @@ class Student(object):
         self.score = score
         self.__id = id
 
+    # TODO
+    def __call__(self, *args, **kwargs):
+        pass
+
     def print_score(self):
         print('%s, %s' % (self.name, self.score))
 
